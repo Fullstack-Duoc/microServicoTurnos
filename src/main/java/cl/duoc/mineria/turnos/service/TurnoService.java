@@ -9,6 +9,7 @@ import cl.duoc.mineria.turnos.repository.TurnoRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +20,7 @@ public class TurnoService {
 
     private final TurnoRepository turnoRepository;
     private final TurnoMapper turnoMapper;
+    private final WebClient webClient;
 
     // 1. Abrir un nuevo turno (POST)
     public TurnoResponseDTO abrirTurno(TurnoRequestDTO request){
