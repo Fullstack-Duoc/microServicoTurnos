@@ -61,4 +61,23 @@ public class TurnoController {
             @RequestParam String nuevoEstado) {
         return ResponseEntity.ok(turnoService.actualizarEstado(id, nuevoEstado));
     }
+
+    // GET: Obtener historial de un usuario (/api/v1/turnos/usuario/1)
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<TurnoResponseDTO>> obtenerPorUsuario(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(turnoService.listarPorUsuario(usuarioId));
+    }
+
+    // GET: Obtener turnos filtrados por estado (/api/v1/turnos/estado/ABIERTO)
+    @GetMapping("/estado/{estado}")
+    public ResponseEntity<List<TurnoResponseDTO>> obtenerPorEstado(@PathVariable String estado) {
+        return ResponseEntity.ok(turnoService.listarPorEstado(estado));
+    }
+
+    // DELETE: Limpiar todos los datos de ejemplo (ABIERTO y FINALIZADO)
+    @DeleteMapping("/mantenimiento/limpiar")
+    public ResponseEntity<Void> eliminarTurnosEjemplo() {
+        turnoService.limpiarTurnos();
+        return ResponseEntity.noContent().build();
+    }
 }

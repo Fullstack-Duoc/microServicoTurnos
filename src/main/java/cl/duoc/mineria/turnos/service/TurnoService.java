@@ -89,4 +89,28 @@ public class TurnoService {
         return turnoMapper.toResponseDTO(turnoActualizado);
     }
 
+    // 7. Listar turnos por Usuario (GET)
+    public List<TurnoResponseDTO> listarPorUsuario(Long usuarioId) {
+        return turnoRepository.findByUsuarioId(usuarioId).stream()
+                .map(turnoMapper::toResponseDTO)
+                .toList();
+    }
+
+    // 8. Listar turnos filtrando por un estado (GET)
+    public List<TurnoResponseDTO> listarPorEstado(String estado) {
+        return turnoRepository.findByEstado(estado).stream()
+                .map(turnoMapper::toResponseDTO)
+                .toList();
+    }
+
+    // 9. Limpiar todos los turnos (DELETE para datos de ejemplo)
+    public void limpiarTurnos() {
+        // Buscamos los turnos primero por estado
+        List<Turno> abiertos = turnoRepository.findByEstado("ABIERTO");
+        List<Turno> finalizados = turnoRepository.findByEstado("FINALIZADO");
+        
+        // Usamos deleteAll, que ya es transaccional por defecto en Spring y no requiere que pongamos el @ aquí
+        turnoRepository.deleteAll(abiertos);
+        turnoRepository.deleteAll(finalizados);
+    }
 }
