@@ -20,6 +20,7 @@ public class TurnoService {
     private final TurnoRepository turnoRepository;
     private final TurnoMapper turnoMapper;
 
+    // 1. Abrir un nuevo turno (POST)
     public TurnoResponseDTO abrirTurno(TurnoRequestDTO request){
         // Validamos que no tenga un turno activo
 
@@ -30,9 +31,62 @@ public class TurnoService {
 
         Turno nuevoTurno = turnoMapper.toEntity(request);
         nuevoTurno.setFechaHoraInicio(LocalDateTime.now());
+        nuevoTurno.setEstado("ABIERTO");
 
+        Turno turnoGuardado = turnoRepository.save(nuevoTurno);
+        return turnoMapper.toResponseDTO(turnoGuardado);
     }
 
-    
+    // 2. Cerrar un turno existente (PUT)
+    public TurnoResponseDTO cerrarTurno(Long id){
+        Turno turno = turnoRepository.findById(id)
+                .orElseThrow(() -> new TurnoInvalidoException("No se encontró ningun turno con el ID: " + id));
+        if ("FINALIZADO".equals(turno.getEstado())){
+            throw new TurnoInvalidoException("Este turno ya se encuentra cerrado");
+        }
+        turno.setFechaHoraFin(LocalDateTime.now());
+        turno.setEstado("FINALIZADO");
+
+        Turno turnoActualizado = turnoRepository.save(turno);
+        return turnoMapper.toResponseDTO(turnoActualizado);
+    }
+
+    // 3. Listar todos los turnos (GET)
+    public List<TurnoResponseDTO> listarTodos(){
+        return turnoRepository.findAll().stream()
+                .map(turnoMapper::toResponseDTO)
+                .toList();
+    }
+
+    // 4. Obtener un turno por ID (GET)
+    public TurnoResponseDTO obtenerPorId(Long id) {
+        Turno turno = turnoRepository.findById(id)
+                .orElseThrow(() -> new TurnoInvalidoException("No se encontró ningún turno con el ID: " + id));
+        return turnoMapper.toResponseDTO(turno);
+    }
+
+    // 5. Eliminar un turno (DELETE)
+    public void eliminarTurno(Long id) {
+        if (!turnoRepository.existsById(id)) {
+            throw new TurnoInvalidoException("No se encontró ningún turno con el ID: " + id);
+        }
+        turnoRepository.deleteById(id);
+    }
+
+    // 6. Actualizar el estado de un turno (PATCH)
+    public TurnoResponseDTO actualizarEstado(Long id, String nuevoEstado) {
+        Turno turno = turnoRepository.findById(id)
+                .orElseThrow(() -> new TurnoInvalidoException("No se encontró ningún turno con el ID: " + id));
+        
+        turno.setEstado(nuevoEstado);
+        
+        // Si el estado es FINALIZADO y no tenía fecha de fin, se la ponemos
+        if ("FINALIZADO".equalsIgnoreCase(nuevoEstado) && turno.getFechaHoraFin() == null) {
+            turno.setFechaHoraFin(LocalDateTime.now());
+        }
+        
+        Turno turnoActualizado = turnoRepository.save(turno);
+        return turnoMapper.toResponseDTO(turnoActualizado);
+    }
 
 }

@@ -1,0 +1,64 @@
+package cl.duoc.mineria.turnos.controller;
+
+import cl.duoc.mineria.turnos.dto.TurnoRequestDTO;
+import cl.duoc.mineria.turnos.dto.TurnoResponseDTO;
+import cl.duoc.mineria.turnos.service.TurnoService;
+import jakarta.validation.Valid;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/turnos")
+@RequiredArgsConstructor
+public class TurnoController {
+
+    private final TurnoService turnoService;
+
+    // POST: Abrir un nuevo turno
+    @PostMapping("/abrir")
+    public ResponseEntity<TurnoResponseDTO> abrirTurno(@Valid @RequestBody TurnoRequestDTO request){
+        TurnoResponseDTO respuesta = turnoService.abrirTurno(request);
+        return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
+    }
+
+    // PUT: Cerrar un turno existente
+    @PutMapping("/cerrar/{id}")
+    public ResponseEntity<TurnoResponseDTO> cerrarTurno(@PathVariable Long id){
+        TurnoResponseDTO respuesta = turnoService.cerrarTurno(id);
+        return ResponseEntity.ok(respuesta);
+    }
+
+    // GET: Listar todos los turnos
+    @GetMapping
+    public ResponseEntity<List<TurnoResponseDTO>> listarTodos(){
+        List<TurnoResponseDTO> lista = turnoService.listarTodos();
+        return ResponseEntity.ok(lista);
+    }
+
+    // GET: Obtener un turno por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<TurnoResponseDTO> obtenerTurno(@PathVariable Long id) {
+        return ResponseEntity.ok(turnoService.obtenerPorId(id));
+    }
+
+    // DELETE: Eliminar un turno
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarTurno(@PathVariable Long id) {
+        turnoService.eliminarTurno(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // PATCH: Cambiar el estado fácilmente (Ej: /api/v1/turnos/1/estado?nuevoEstado=FINALIZADO)
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<TurnoResponseDTO> cambiarEstado(
+            @PathVariable Long id, 
+            @RequestParam String nuevoEstado) {
+        return ResponseEntity.ok(turnoService.actualizarEstado(id, nuevoEstado));
+    }
+}
