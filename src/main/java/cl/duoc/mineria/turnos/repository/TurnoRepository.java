@@ -25,4 +25,5 @@ public interface TurnoRepository extends JpaRepository<Turno, Long> {
 
     // Busca turnos por un estado específico (ABIERTO o FINALIZADO)
     List<Turno> findByEstado(String estado);
+    
 }

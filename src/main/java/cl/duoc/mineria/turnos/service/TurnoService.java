@@ -112,5 +112,6 @@ public class TurnoService {
         // Usamos deleteAll, que ya es transaccional por defecto en Spring y no requiere que pongamos el @ aquí
         turnoRepository.deleteAll(abiertos);
         turnoRepository.deleteAll(finalizados);
+        
     }
 }
