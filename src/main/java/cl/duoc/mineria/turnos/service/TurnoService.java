@@ -9,6 +9,7 @@ import cl.duoc.mineria.turnos.repository.TurnoRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
@@ -115,5 +116,18 @@ public class TurnoService {
         turnoRepository.deleteAll(abiertos);
         turnoRepository.deleteAll(finalizados);
         
+    }
+
+    // 10. Eliminar historial completo de un usuario por renuncia/despido
+    @Transactional
+    public void eliminarHistorialUsuario(Long usuarioId) {
+        // Validación de seguridad: No borrar historial si el usuario tiene un turno activo.
+        // Primero debe cerrarse o anularse ese turno específico.
+        turnoRepository.findByUsuarioIdAndEstado(usuarioId, "ABIERTO")
+                .ifPresent(turno -> {
+                    throw new TurnoInvalidoException("No se puede eliminar el historial: el usuario tiene un turno ABIERTO. Ciérrelo antes de proceder.");
+                });
+
+        turnoRepository.deleteByUsuarioId(usuarioId);
     }
 }

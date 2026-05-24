@@ -2,6 +2,8 @@ package cl.duoc.mineria.turnos.repository;
 
 import cl.duoc.mineria.turnos.model.Turno;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,4 +28,8 @@ public interface TurnoRepository extends JpaRepository<Turno, Long> {
     // Busca turnos por un estado específico (ABIERTO o FINALIZADO)
     List<Turno> findByEstado(String estado);
     
+    // Elimina todos los turnos asociados a un ID de usuario
+    @Modifying
+    @Query("DELETE FROM Turno t WHERE t.usuarioId = :usuarioId")
+    void deleteByUsuarioId(Long usuarioId);
 }

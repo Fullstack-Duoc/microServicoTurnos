@@ -4,9 +4,7 @@ import cl.duoc.mineria.turnos.dto.TurnoRequestDTO;
 import cl.duoc.mineria.turnos.dto.TurnoResponseDTO;
 import cl.duoc.mineria.turnos.service.TurnoService;
 import jakarta.validation.Valid;
-
-import lombok.RequiredArgsConstructor;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +13,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/turnos")
-@RequiredArgsConstructor
 public class TurnoController {
 
-    private final TurnoService turnoService;
+    @Autowired
+    private TurnoService turnoService;
 
     // POST: Abrir un nuevo turno
     @PostMapping("/abrir")
-    public ResponseEntity<TurnoResponseDTO> abrirTurno(@Valid @RequestBody TurnoRequestDTO request){
-        TurnoResponseDTO respuesta = turnoService.abrirTurno(request);
-        return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
+    public ResponseEntity<TurnoResponseDTO> abrirTurno(@Valid @RequestBody TurnoRequestDTO dto) {
+        TurnoResponseDTO nuevoTurno = turnoService.abrirTurno(dto);
+        return new ResponseEntity<>(nuevoTurno, HttpStatus.CREATED);
     }
 
     // PUT: Cerrar un turno existente
@@ -78,6 +76,13 @@ public class TurnoController {
     @DeleteMapping("/mantenimiento/limpiar")
     public ResponseEntity<Void> eliminarTurnosEjemplo() {
         turnoService.limpiarTurnos();
+        return ResponseEntity.noContent().build();
+    }
+
+    // DELETE: Eliminar todo el historial de un usuario (Ej: /api/v1/turnos/usuario/1/historial)
+    @DeleteMapping("/usuario/{usuarioId}/historial")
+    public ResponseEntity<Void> eliminarHistorial(@PathVariable Long usuarioId) {
+        turnoService.eliminarHistorialUsuario(usuarioId);
         return ResponseEntity.noContent().build();
     }
     
