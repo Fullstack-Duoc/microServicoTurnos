@@ -8,6 +8,8 @@ import cl.duoc.mineria.turnos.model.Turno;
 import cl.duoc.mineria.turnos.repository.TurnoRepository;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,9 +21,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TurnoService {
 
-    private final TurnoRepository turnoRepository;
-    private final TurnoMapper turnoMapper;
-    private final WebClient webClient;
+    @Autowired
+    private TurnoRepository turnoRepository;
+
+    @Autowired
+    private TurnoMapper turnoMapper;
+    
+    @Autowired
+    private WebClient webClient;
 
     // 1. Abrir un nuevo turno (POST)
     public TurnoResponseDTO abrirTurno(TurnoRequestDTO request){
