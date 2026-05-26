@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExeptionHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(TurnoInvalidoException.class)
     public ResponseEntity<ErrorDetalle> handleTurnoInvalidoException(TurnoInvalidoException ex, WebRequest request){
